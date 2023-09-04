@@ -1,0 +1,352 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="E_COMMERCEModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="CATEGORY">
+          <Key>
+            <PropertyRef Name="CAT_ID" />
+          </Key>
+          <Property Name="CAT_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CAT_NAME" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="CAT_DESC" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="CAT_IMAGE" Type="varbinary(max)" />
+          <Property Name="CAT_STATUS" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="CAT_CREATEDBY" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="CAT_CREATEDDATE" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="CAT_MODIBY" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="CAT_MODIDATE" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ORDERS">
+          <Key>
+            <PropertyRef Name="ORD_ID" />
+          </Key>
+          <Property Name="ORD_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ORD_USERID" Type="int" Nullable="false" />
+          <Property Name="ORD_PROID" Type="int" Nullable="false" />
+          <Property Name="ORD_QTY" Type="int" Nullable="false" />
+          <Property Name="ORD_TOTAL" Type="int" Nullable="false" />
+          <Property Name="ORD_STATUS" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ORD_CREATEBY" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ORD_CREATEDATE" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ORD_MODIBY" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ORD_MODIDATE" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PRODUCTS">
+          <Key>
+            <PropertyRef Name="PRO_ID" />
+          </Key>
+          <Property Name="PRO_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PRO_NAME" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="PROCAT_ID" Type="int" Nullable="false" />
+          <Property Name="PRO_DESC" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="PRO_STOCK" Type="int" Nullable="false" />
+          <Property Name="PRO_IMAGE" Type="varbinary(max)" />
+          <Property Name="PRO_PRICE" Type="int" Nullable="false" />
+          <Property Name="PRO_STATUS" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="PRO_CREATEBY" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="PRO_CREATEDATE" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="PRO_MODIBY" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="PRO_MODIDATE" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="USER">
+          <Key>
+            <PropertyRef Name="USER_ID" />
+          </Key>
+          <Property Name="USER_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="USER_NAME" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="USER_EMAIL" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="USER_PASSWORD" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="USER_PHONE" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="USER_ADDRESS" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="USER_IMAGE" Type="varbinary(max)" />
+          <Property Name="USER_ROLE" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="USER_STATUS" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="USER_CREATEBY" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="USER_CREATEDATE" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="USER_MODIBY" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="USER_MODIDATE" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_ORDERS_PRODUCTS">
+          <End Role="PRODUCTS" Type="Self.PRODUCTS" Multiplicity="1" />
+          <End Role="ORDERS" Type="Self.ORDERS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PRODUCTS">
+              <PropertyRef Name="PRO_ID" />
+            </Principal>
+            <Dependent Role="ORDERS">
+              <PropertyRef Name="ORD_PROID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ORDERS_USER">
+          <End Role="USER" Type="Self.USER" Multiplicity="1" />
+          <End Role="ORDERS" Type="Self.ORDERS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="USER">
+              <PropertyRef Name="USER_ID" />
+            </Principal>
+            <Dependent Role="ORDERS">
+              <PropertyRef Name="ORD_USERID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PRODUCTS_CATEGORY">
+          <End Role="CATEGORY" Type="Self.CATEGORY" Multiplicity="1" />
+          <End Role="PRODUCTS" Type="Self.PRODUCTS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CATEGORY">
+              <PropertyRef Name="CAT_ID" />
+            </Principal>
+            <Dependent Role="PRODUCTS">
+              <PropertyRef Name="PROCAT_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="E_COMMERCEModelStoreContainer">
+          <EntitySet Name="CATEGORY" EntityType="Self.CATEGORY" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ORDERS" EntityType="Self.ORDERS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PRODUCTS" EntityType="Self.PRODUCTS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="USER" EntityType="Self.USER" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_ORDERS_PRODUCTS" Association="Self.FK_ORDERS_PRODUCTS">
+            <End Role="PRODUCTS" EntitySet="PRODUCTS" />
+            <End Role="ORDERS" EntitySet="ORDERS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ORDERS_USER" Association="Self.FK_ORDERS_USER">
+            <End Role="USER" EntitySet="USER" />
+            <End Role="ORDERS" EntitySet="ORDERS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PRODUCTS_CATEGORY" Association="Self.FK_PRODUCTS_CATEGORY">
+            <End Role="CATEGORY" EntitySet="CATEGORY" />
+            <End Role="PRODUCTS" EntitySet="PRODUCTS" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="E_COMMERCEModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="CATEGORY">
+          <Key>
+            <PropertyRef Name="CAT_ID" />
+          </Key>
+          <Property Name="CAT_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CAT_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="CAT_DESC" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="CAT_IMAGE" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="CAT_STATUS" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="CAT_CREATEDBY" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="CAT_CREATEDDATE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="CAT_MODIBY" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="CAT_MODIDATE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="PRODUCTS" Relationship="Self.FK_PRODUCTS_CATEGORY" FromRole="CATEGORY" ToRole="PRODUCTS" />
+        </EntityType>
+        <EntityType Name="ORDER">
+          <Key>
+            <PropertyRef Name="ORD_ID" />
+          </Key>
+          <Property Name="ORD_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ORD_USERID" Type="Int32" Nullable="false" />
+          <Property Name="ORD_PROID" Type="Int32" Nullable="false" />
+          <Property Name="ORD_QTY" Type="Int32" Nullable="false" />
+          <Property Name="ORD_TOTAL" Type="Int32" Nullable="false" />
+          <Property Name="ORD_STATUS" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ORD_CREATEBY" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ORD_CREATEDATE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ORD_MODIBY" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ORD_MODIDATE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="PRODUCT" Relationship="Self.FK_ORDERS_PRODUCTS" FromRole="ORDERS" ToRole="PRODUCTS" />
+          <NavigationProperty Name="USER" Relationship="Self.FK_ORDERS_USER" FromRole="ORDERS" ToRole="USER" />
+        </EntityType>
+        <EntityType Name="PRODUCT">
+          <Key>
+            <PropertyRef Name="PRO_ID" />
+          </Key>
+          <Property Name="PRO_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PRO_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="PROCAT_ID" Type="Int32" Nullable="false" />
+          <Property Name="PRO_DESC" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="PRO_STOCK" Type="Int32" Nullable="false" />
+          <Property Name="PRO_IMAGE" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="PRO_PRICE" Type="Int32" Nullable="false" />
+          <Property Name="PRO_STATUS" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="PRO_CREATEBY" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="PRO_CREATEDATE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="PRO_MODIBY" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="PRO_MODIDATE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="CATEGORY" Relationship="Self.FK_PRODUCTS_CATEGORY" FromRole="PRODUCTS" ToRole="CATEGORY" />
+          <NavigationProperty Name="ORDERS" Relationship="Self.FK_ORDERS_PRODUCTS" FromRole="PRODUCTS" ToRole="ORDERS" />
+        </EntityType>
+        <EntityType Name="USER">
+          <Key>
+            <PropertyRef Name="USER_ID" />
+          </Key>
+          <Property Name="USER_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="USER_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="USER_EMAIL" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="USER_PASSWORD" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="USER_PHONE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="USER_ADDRESS" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="USER_IMAGE" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="USER_ROLE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="USER_STATUS" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="USER_CREATEBY" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="USER_CREATEDATE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="USER_MODIBY" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="USER_MODIDATE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="ORDERS" Relationship="Self.FK_ORDERS_USER" FromRole="USER" ToRole="ORDERS" />
+        </EntityType>
+        <Association Name="FK_PRODUCTS_CATEGORY">
+          <End Role="CATEGORY" Type="Self.CATEGORY" Multiplicity="1" />
+          <End Role="PRODUCTS" Type="Self.PRODUCT" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CATEGORY">
+              <PropertyRef Name="CAT_ID" />
+            </Principal>
+            <Dependent Role="PRODUCTS">
+              <PropertyRef Name="PROCAT_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ORDERS_PRODUCTS">
+          <End Role="PRODUCTS" Type="Self.PRODUCT" Multiplicity="1" />
+          <End Role="ORDERS" Type="Self.ORDER" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PRODUCTS">
+              <PropertyRef Name="PRO_ID" />
+            </Principal>
+            <Dependent Role="ORDERS">
+              <PropertyRef Name="ORD_PROID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ORDERS_USER">
+          <End Role="USER" Type="Self.USER" Multiplicity="1" />
+          <End Role="ORDERS" Type="Self.ORDER" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="USER">
+              <PropertyRef Name="USER_ID" />
+            </Principal>
+            <Dependent Role="ORDERS">
+              <PropertyRef Name="ORD_USERID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="E_COMMERCEEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="CATEGORies" EntityType="Self.CATEGORY" />
+          <EntitySet Name="ORDERS" EntityType="Self.ORDER" />
+          <EntitySet Name="PRODUCTS" EntityType="Self.PRODUCT" />
+          <EntitySet Name="USERs" EntityType="Self.USER" />
+          <AssociationSet Name="FK_PRODUCTS_CATEGORY" Association="Self.FK_PRODUCTS_CATEGORY">
+            <End Role="CATEGORY" EntitySet="CATEGORies" />
+            <End Role="PRODUCTS" EntitySet="PRODUCTS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ORDERS_PRODUCTS" Association="Self.FK_ORDERS_PRODUCTS">
+            <End Role="PRODUCTS" EntitySet="PRODUCTS" />
+            <End Role="ORDERS" EntitySet="ORDERS" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ORDERS_USER" Association="Self.FK_ORDERS_USER">
+            <End Role="USER" EntitySet="USERs" />
+            <End Role="ORDERS" EntitySet="ORDERS" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="E_COMMERCEModelStoreContainer" CdmEntityContainer="E_COMMERCEEntities">
+          <EntitySetMapping Name="CATEGORies">
+            <EntityTypeMapping TypeName="E_COMMERCEModel.CATEGORY">
+              <MappingFragment StoreEntitySet="CATEGORY">
+                <ScalarProperty Name="CAT_ID" ColumnName="CAT_ID" />
+                <ScalarProperty Name="CAT_NAME" ColumnName="CAT_NAME" />
+                <ScalarProperty Name="CAT_DESC" ColumnName="CAT_DESC" />
+                <ScalarProperty Name="CAT_IMAGE" ColumnName="CAT_IMAGE" />
+                <ScalarProperty Name="CAT_STATUS" ColumnName="CAT_STATUS" />
+                <ScalarProperty Name="CAT_CREATEDBY" ColumnName="CAT_CREATEDBY" />
+                <ScalarProperty Name="CAT_CREATEDDATE" ColumnName="CAT_CREATEDDATE" />
+                <ScalarProperty Name="CAT_MODIBY" ColumnName="CAT_MODIBY" />
+                <ScalarProperty Name="CAT_MODIDATE" ColumnName="CAT_MODIDATE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ORDERS">
+            <EntityTypeMapping TypeName="E_COMMERCEModel.ORDER">
+              <MappingFragment StoreEntitySet="ORDERS">
+                <ScalarProperty Name="ORD_ID" ColumnName="ORD_ID" />
+                <ScalarProperty Name="ORD_USERID" ColumnName="ORD_USERID" />
+                <ScalarProperty Name="ORD_PROID" ColumnName="ORD_PROID" />
+                <ScalarProperty Name="ORD_QTY" ColumnName="ORD_QTY" />
+                <ScalarProperty Name="ORD_TOTAL" ColumnName="ORD_TOTAL" />
+                <ScalarProperty Name="ORD_STATUS" ColumnName="ORD_STATUS" />
+                <ScalarProperty Name="ORD_CREATEBY" ColumnName="ORD_CREATEBY" />
+                <ScalarProperty Name="ORD_CREATEDATE" ColumnName="ORD_CREATEDATE" />
+                <ScalarProperty Name="ORD_MODIBY" ColumnName="ORD_MODIBY" />
+                <ScalarProperty Name="ORD_MODIDATE" ColumnName="ORD_MODIDATE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PRODUCTS">
+            <EntityTypeMapping TypeName="E_COMMERCEModel.PRODUCT">
+              <MappingFragment StoreEntitySet="PRODUCTS">
+                <ScalarProperty Name="PRO_ID" ColumnName="PRO_ID" />
+                <ScalarProperty Name="PRO_NAME" ColumnName="PRO_NAME" />
+                <ScalarProperty Name="PROCAT_ID" ColumnName="PROCAT_ID" />
+                <ScalarProperty Name="PRO_DESC" ColumnName="PRO_DESC" />
+                <ScalarProperty Name="PRO_STOCK" ColumnName="PRO_STOCK" />
+                <ScalarProperty Name="PRO_IMAGE" ColumnName="PRO_IMAGE" />
+                <ScalarProperty Name="PRO_PRICE" ColumnName="PRO_PRICE" />
+                <ScalarProperty Name="PRO_STATUS" ColumnName="PRO_STATUS" />
+                <ScalarProperty Name="PRO_CREATEBY" ColumnName="PRO_CREATEBY" />
+                <ScalarProperty Name="PRO_CREATEDATE" ColumnName="PRO_CREATEDATE" />
+                <ScalarProperty Name="PRO_MODIBY" ColumnName="PRO_MODIBY" />
+                <ScalarProperty Name="PRO_MODIDATE" ColumnName="PRO_MODIDATE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="USERs">
+            <EntityTypeMapping TypeName="E_COMMERCEModel.USER">
+              <MappingFragment StoreEntitySet="USER">
+                <ScalarProperty Name="USER_ID" ColumnName="USER_ID" />
+                <ScalarProperty Name="USER_NAME" ColumnName="USER_NAME" />
+                <ScalarProperty Name="USER_EMAIL" ColumnName="USER_EMAIL" />
+                <ScalarProperty Name="USER_PASSWORD" ColumnName="USER_PASSWORD" />
+                <ScalarProperty Name="USER_PHONE" ColumnName="USER_PHONE" />
+                <ScalarProperty Name="USER_ADDRESS" ColumnName="USER_ADDRESS" />
+                <ScalarProperty Name="USER_IMAGE" ColumnName="USER_IMAGE" />
+                <ScalarProperty Name="USER_ROLE" ColumnName="USER_ROLE" />
+                <ScalarProperty Name="USER_STATUS" ColumnName="USER_STATUS" />
+                <ScalarProperty Name="USER_CREATEBY" ColumnName="USER_CREATEBY" />
+                <ScalarProperty Name="USER_CREATEDATE" ColumnName="USER_CREATEDATE" />
+                <ScalarProperty Name="USER_MODIBY" ColumnName="USER_MODIBY" />
+                <ScalarProperty Name="USER_MODIDATE" ColumnName="USER_MODIDATE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

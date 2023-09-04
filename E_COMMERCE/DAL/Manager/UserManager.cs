@@ -1,0 +1,59 @@
+﻿using DAL.Models;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DAL.Manager
+{
+    public class UserManager
+    {
+        E_COMMERCEEntities dbhelper = new E_COMMERCEEntities();
+        public string AddUser(USER usr)
+        {
+            int result = 0;
+
+            dbhelper.USERs.Add(usr);
+            result = dbhelper.SaveChanges();
+
+            if (result > 0)
+            {
+                return usr.USER_ID.ToString();
+            }
+            else
+            {
+                return "Error ";
+            }
+        }
+
+        public USER userDetails(int Id)
+        {
+            USER return_Obj = new USER();
+            return return_Obj = dbhelper.USERs.Where(e => e.USER_ID == Id && e.USER_STATUS != "D").SingleOrDefault();
+        }
+        public List<USER> UserDetails(int id)
+        {
+            return dbhelper.USERs.Where(p => p.USER_ID == id).ToList();
+        }
+       
+        
+
+        public USER UserLogin(USER ur)
+        {
+            var log = dbhelper.USERs.Where(x => x.USER_EMAIL.Equals(ur.USER_EMAIL) &&
+                                  x.USER_PASSWORD.Equals(ur.USER_PASSWORD)).FirstOrDefault();
+
+            return log;
+        }
+
+
+
+
+
+      
+
+    }
+
+}
