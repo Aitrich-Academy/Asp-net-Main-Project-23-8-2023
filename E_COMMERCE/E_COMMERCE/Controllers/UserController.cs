@@ -63,58 +63,57 @@ namespace ECOMMERSE.Controllers
             }
 
         }
-      
-        
 
 
-        //[System.Web.Http.AcceptVerbs("GET", "POST")]
-        //[System.Web.Http.HttpGet]
-        [Route("Login")]
-        [HttpPost]
-        public HttpResponseMessage Login(Ent_User user)
-        {
-            if (user != null && ModelState.IsValid)
-            {
-                Ent_User ent = user;
-                USER usr = new USER();
 
-                usr.USER_EMAIL = ent.email;
-                usr.USER_PASSWORD = ent.password;
 
-                USER result = mgr.UserLogin(usr);
+		[Route("Login")]
+		[HttpPost]
+		public HttpResponseMessage Login(Ent_User user)
+		{
+			if (user != null && ModelState.IsValid)
+			{
+				Ent_User ent = user;
+				USER usr = new USER();
 
-                if (result != null)
-                {
-                    String token = TokenManager.GenerateToken(result);
-                    LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
-                    loginResponseDTO.Token = token;
-                    loginResponseDTO.email = result.USER_EMAIL;
-                    loginResponseDTO.user_id = result.USER_ID;
-                    loginResponseDTO.address = result.USER_ADDRESS;
-                    loginResponseDTO.phone = result.USER_PHONE;
-                    loginResponseDTO.role = result.USER_ROLE;
-                    loginResponseDTO.name = result.USER_NAME;
+				usr.USER_EMAIL = ent.email;
+				usr.USER_PASSWORD = ent.password;
 
-                    ResponseDataDTO response = new ResponseDataDTO(true, "Success", loginResponseDTO);
-                    return Request.CreateResponse(HttpStatusCode.OK, response);
-                    //return Request.CreateErrorResponse(HttpStatusCode.OK, result);
+				USER result = mgr.UserLogin(usr);
 
-                    //return Request.CreateErrorResponse(HttpStatusCode.OK, "Success");
-                }
-                else
-                {
-                    return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Invalid User name and password !");
-                }
-            }
-            else
-            {
-                IEnumerable<ModelError> allErrors = ModelState.Values.SelectMany(v => v.Errors);
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new
-                {
-                    Errors = UtilsConfig.GetErrorListFromModelState(ModelState)
-                });
-            }
-        }
+				if (result != null)
+				{
+					String token = TokenManager.GenerateToken(result);
+					LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
+					loginResponseDTO.Token = token;
+					loginResponseDTO.email = result.USER_EMAIL;
+					loginResponseDTO.user_id = result.USER_ID;
+					loginResponseDTO.address = result.USER_ADDRESS;
+					loginResponseDTO.phone = result.USER_PHONE;
+					loginResponseDTO.role = result.USER_ROLE;
+					loginResponseDTO.name = result.USER_NAME;
 
-    }
+					ResponseDataDTO response = new ResponseDataDTO(true, "Success", loginResponseDTO);
+					return Request.CreateResponse(HttpStatusCode.OK, response);
+					//return Request.CreateErrorResponse(HttpStatusCode.OK, result);
+
+					return Request.CreateErrorResponse(HttpStatusCode.OK, "Success");
+				}
+				else
+				{
+					return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Invalid User name and password !");
+				}
+			}
+			else
+			{
+				IEnumerable<ModelError> allErrors = ModelState.Values.SelectMany(v => v.Errors);
+				return Request.CreateResponse(HttpStatusCode.BadRequest, new
+				{
+					Errors = UtilsConfig.GetErrorListFromModelState(ModelState)
+				});
+			}
+		}
+
+
+	}
 }
