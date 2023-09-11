@@ -10,7 +10,7 @@ namespace DAL.Manager
 {
     public class UserManager
     {
-        E_COMMERCEEntities dbhelper = new E_COMMERCEEntities();
+        Model1 dbhelper = new Model1();
         public string AddUser(USER usr)
         {
             int result = 0;
@@ -37,8 +37,8 @@ namespace DAL.Manager
         {
             return dbhelper.USERs.Where(p => p.USER_ID == id).ToList();
         }
-       
-        
+
+
 
         public USER UserLogin(USER ur)
         {
@@ -48,7 +48,25 @@ namespace DAL.Manager
             return log;
         }
 
+        public string AddCategory(CATEGORY cat)
+        {
+            int result = 0;
+            dbhelper.CATEGORies.Add(cat);
+            result = dbhelper.SaveChanges();
+            if (result > 0)
+            {
+                return cat.CAT_ID.ToString();
+            }
+            else
+            {
+                return "Error";
+            }
 
+        }
+
+      
+                
+}
 
 
 
@@ -56,4 +74,4 @@ namespace DAL.Manager
 
     }
 
-}
+
