@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace DAL.Manager
 {
     public class UserManager
@@ -28,7 +29,6 @@ namespace DAL.Manager
                 return "Error ";
             }
         }
-
         public USER userDetails(int Id)
         {
             USER return_Obj = new USER();
@@ -38,6 +38,7 @@ namespace DAL.Manager
         {
             return dbhelper.USERs.Where(p => p.USER_ID == id).ToList();
         }
+
 
 
 
@@ -56,9 +57,5 @@ namespace DAL.Manager
 }
 
 
-
-      
-
-    }
 
 
