@@ -39,6 +39,9 @@ namespace DAL.Manager
             return dbhelper.USERs.Where(p => p.USER_ID == id).ToList();
         }
 
+
+
+
         public USER UserLogin(USER ur)
         {
             var log = dbhelper.USERs.Where(x => x.USER_EMAIL.Equals(ur.USER_EMAIL) &&
@@ -47,10 +50,26 @@ namespace DAL.Manager
             return log;
         }
 
-       
+        public string AddCategory(CATEGORY cat)
+        {
+            int result = 0;
+            dbhelper.CATEGORies.Add(cat);
+            result = dbhelper.SaveChanges();
+            if (result > 0)
+            {
+                return cat.CAT_ID.ToString();
+            }
+            else
+            {
+                return "Error";
+            }
 
+        }
 
-    }
+      
+                
 }
+
+
 
 
