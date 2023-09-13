@@ -19,9 +19,9 @@ namespace ECOMMERSE.Models
 
         public string role { get; set; } = null;
         public string status { get; set; } = null;
-        //  public string createBy { get; set; }
+        public string createBy { get; set; }
         public string createdate { get; set; } = null;
-        //  public string modiBy { get; set; }
+        public string modiBy { get; set; }
         public string modiDate { get; set; } = null;
     }
 }
