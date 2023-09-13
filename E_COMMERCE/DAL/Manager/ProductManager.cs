@@ -83,6 +83,47 @@ namespace DAL.Manager
             }
         }
 
-        
+        //ProductById
+        public PRODUCT productbyId(int productId)
+        {
+            PRODUCT pobj = new PRODUCT();
+            return pobj = dbhelper.PRODUCTS.Where(e => e.PRO_ID == productId && e.PRO_STATUS != "D").SingleOrDefault();
+        }
+
+        //ProductSearch
+        public List<PRODUCT> searchProducts(string keyname)
+        {
+            if (!string.IsNullOrWhiteSpace(keyname))
+            {
+                var products = dbhelper.PRODUCTS.OrderBy(e => e.PRO_NAME)
+                    .Where(e => e.PRO_NAME.Contains(keyname) && e.PRO_STATUS != "D").ToList();    // || keyname == null
+                return products;
+            }
+            else
+            {
+                return new List<PRODUCT>();
+            }
+        }
+
+        //Filter Products By Category
+        public List<PRODUCT> filterProducts(int? category)
+        {
+            if (category != null)
+            {
+                var products = dbhelper.PRODUCTS.OrderBy(e => e.PRO_ID).Where(e => e.PROCAT_ID == category && e.PRO_STATUS != "D").ToList();
+                return products;
+            }
+            else
+            {
+                return new List<PRODUCT>();
+            }
+        }
+
+        //Display All Products
+        public List<PRODUCT> allProducts()
+        {
+            return dbhelper.PRODUCTS.OrderBy(e => e.PRO_ID).Where(e => e.PRO_STATUS != "D").ToList();
+        }
+
     }
 }
