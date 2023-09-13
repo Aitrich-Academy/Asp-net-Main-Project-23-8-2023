@@ -47,21 +47,7 @@ namespace DAL.Manager
             return log;
         }
 
-        public string AddCategory(CATEGORY cat)
-        {
-            int result = 0;
-            dbhelper.CATEGORies.Add(cat);
-            result = dbhelper.SaveChanges();
-            if (result > 0)
-            {
-                return cat.CAT_ID.ToString();
-            }
-            else
-            {
-                return "Error";
-            }
-
-        }
+       
 
 
     }
