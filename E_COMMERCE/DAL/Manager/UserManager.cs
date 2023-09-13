@@ -37,6 +37,10 @@ namespace DAL.Manager
         {
             return dbhelper.USERs.Where(p => p.USER_ID == id).ToList();
         }
+
+
+
+
         public USER UserLogin(USER ur)
         {
             var log = dbhelper.USERs.Where(x => x.USER_EMAIL.Equals(ur.USER_EMAIL) &&
@@ -45,58 +49,26 @@ namespace DAL.Manager
             return log;
         }
 
-
-
-        //Insert
-        public string productInsert(PRODUCT product)
+        public string AddCategory(CATEGORY cat)
         {
             int result = 0;
-            var objProduct=dbhelper.PRODUCTS.Where(e=>e.PRO_ID == product.PRO_ID && e.PRO_STATUS!="D").SingleOrDefault();
-            if (objProduct == null)
+            dbhelper.CATEGORies.Add(cat);
+            result = dbhelper.SaveChanges();
+            if (result > 0)
             {
-                product.PRO_STATUS = "A";
-                dbhelper.PRODUCTS.Add(product);
-                result = dbhelper.SaveChanges();
-
-                return "Product Inserted Successfully";
+                return cat.CAT_ID.ToString();
             }
             else
             {
-                return "Cannot be Inserted";
+                return "Error";
             }
-        }
 
-        //Update
-        public string productUpdate(PRODUCT prd)
-        {
-            int result = 0;
-            var objProduct = dbhelper.PRODUCTS.Where(e => e.PRO_ID == prd.PRO_ID && e.PRO_STATUS != "D").FirstOrDefault();
-            //PRODUCT pro = product;
-
-            if (objProduct != null)
-            {
-                objProduct.PRO_NAME = prd.PRO_NAME;
-                objProduct.PROCAT_ID= prd.PROCAT_ID;
-                objProduct.PRO_DESC = prd.PRO_DESC;
-                objProduct.PRO_STOCK = prd.PRO_STOCK;
-                objProduct.PRO_IMAGE = prd.PRO_IMAGE;
-                objProduct.PRO_PRICE = prd.PRO_PRICE;
-                objProduct.PRO_STATUS = "A";
-                objProduct.PRO_MODIBY = "Admin";
-                objProduct.PRO_MODIDATE = DateTime.Now.ToString();
-
-                dbhelper.Entry(objProduct).State = EntityState.Modified;
-                result = dbhelper.SaveChanges();
-
-                return "Product Updated Successfully.";
-
-            }
-            else
-            {
-                return "Product not found.";
-            }
         }
 
       
-    }
+                
 }
+
+
+
+
