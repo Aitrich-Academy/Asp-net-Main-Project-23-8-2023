@@ -35,7 +35,7 @@ namespace E_COMMERCE.Controllers
 
     public class ProductController : ApiController
     {
-        UserManager mgr = new UserManager();
+        ProductManager mgr = new ProductManager();
 
         #region PRODUCT INSERT
 
@@ -188,6 +188,108 @@ namespace E_COMMERCE.Controllers
 
         #endregion
 
-      
+        #region PRODUCT DELETE
+
+        [System.Web.Http.HttpGet]
+        [Route("ProductDelete/{productId}")]
+        [System.Web.Http.HttpDelete]
+        public HttpResponseMessage ProductDelete(int productId)
+        {
+            if (ModelState.IsValid)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, mgr.productDelete(productId));
+            }
+            else
+            {
+                IEnumerable<ModelError> allErrors = ModelState.Values.SelectMany(v => v.Errors);
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new
+                {
+                    Errors = UtilsConfig.GetErrorListFromModelState(ModelState)
+                });
+            }
+        }
+
+        #endregion
+
+        #region UPLOAD FILE
+
+        [System.Web.Http.HttpGet]
+        [HttpPost]
+        [Route("FileUpload")]
+        public IHttpActionResult FileUpload()
+        {
+            try
+            {
+
+                string[] AllowedFileExt = new string[] { ".jpg", ".png" };
+
+                var httpRequest = HttpContext.Current.Request;
+
+                if (httpRequest.Files.Count == 0)                    //Checks if there is a file to upload
+                {
+                    return BadRequest("No file to upload");
+                }
+
+                //Get the uploaded file
+                var postedFile = httpRequest.Files[0];
+
+                if (!AllowedFileExt.Contains(postedFile.FileName.Substring(postedFile.FileName.LastIndexOf("."))))
+                {
+                    return BadRequest("Invalid File Format");
+                }
+
+                var fileName = Path.GetFileName(postedFile.FileName);
+                var filePath = HttpContext.Current.Server.MapPath("~/ProductImages/" + fileName);
+
+                if (File.Exists(filePath))
+                {
+                    return BadRequest("A file with the same name already exists.");
+                }
+
+                //Save the file to the server
+                postedFile.SaveAs(filePath);
+
+                return Ok("File Uploaded Successfully");
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+
+        //[System.Web.Http.HttpGet]
+        //[System.Web.Http.HttpPost]
+        //[Route("FileUpload")]
+
+        //public async Task<IHttpActionResult> FileUpload()
+        //{
+        //    //var context = HttpContext.Current;
+        //    //var root = context.Server.MapPath("~/ProductImages");
+        //    //var provider= new MultipartFormDataStreamProvider(root);
+
+        //    //try
+        //    //{
+        //    //   await Request.Content.ReadAsMultipartAsync(provider);
+        //    //    foreach(var file in provider.FileData)
+        //    //    {
+        //    //        var name = file.Headers.ContentDisposition.FileName;
+        //    //        name = name.Trim('"');
+
+        //    //        var localfile = file.LocalFileName;
+        //    //        var filepath=Path.Combine(root, name);
+
+        //    //        File.Move(localfile,filepath);
+        //    //    }
+        //    //    return Ok("File Uploaded Successfully");
+        //    //}
+        //    //catch (Exception ex) 
+        //    //{
+        //    //    return InternalServerError(ex);
+        //    //}
+        //}
+
+        #endregion
+
     }
 }

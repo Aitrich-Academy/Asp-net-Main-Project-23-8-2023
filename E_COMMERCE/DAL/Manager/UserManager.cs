@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace DAL.Manager
 {
+
     public class UserManager
     {
         Model1 dbhelper = new Model1();
