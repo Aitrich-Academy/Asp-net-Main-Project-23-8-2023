@@ -211,6 +211,80 @@ namespace E_COMMERCE.Controllers
 
         #endregion
 
+        #region PRODUCT BY ID
+
+        [System.Web.Http.HttpGet]
+        [Route("ProductById/{productId}")]
+        public HttpResponseMessage ProductById(string productId)
+        {
+            Ent_Product prd = new Ent_Product();
+
+            if (productId != null)
+            {
+                PRODUCT product = mgr.productbyId(Convert.ToInt32(productId));
+                if (product != null)
+                {
+                    prd.productid = product.PRO_ID;
+                    prd.productname = product.PRO_NAME;
+                    prd.procatid = (int)product.PROCAT_ID;
+                    prd.productdescription = product.PRO_DESC;
+                    prd.productstock = product.PRO_STOCK;
+                    prd.productimage = product.PRO_IMAGE;
+                    prd.productprice = product.PRO_PRICE;
+                    prd.productstatus = "A";
+                    prd.productcreatedby = "Admin";
+                    prd.productcreateddate = DateTime.Now.ToString();
+                    prd.productmodifiedby = "Admin";
+                    prd.productmodifieddate = DateTime.Now.ToString();
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, (prd));
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound, "Product Not Found");
+            }
+        }
+
+        #endregion
+
+        #region PRODUCT SEARCH
+
+        [System.Web.Http.HttpGet]
+        [Route("ProductSearch/{keyname}")]
+        public IHttpActionResult ProductSearch(string keyname)
+        {
+            try
+            {
+                var products = mgr.searchProducts(keyname);
+
+                if (products.Any())
+                {
+                    var startsWithKeyName = products.Where(e => e.PRO_NAME.StartsWith(keyname, StringComparison.OrdinalIgnoreCase)); //List of products containing keyName
+                    var remainingProducts = products.Except(startsWithKeyName);  //List of remaining products 
+
+                    var allProducts = startsWithKeyName.Concat(remainingProducts); // Concatenate above lists to display products starting with 'keyName' first
+
+                    var result = allProducts.Select(e => new Ent_Product
+                    {
+                        productname = e.PRO_NAME,
+                        productimage = e.PRO_IMAGE,
+                        productprice = e.PRO_PRICE,
+                    }).ToList();                          // To select and display specified fields
+
+                    return Ok(result);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+        #endregion
+
         #region UPLOAD FILE
 
         [System.Web.Http.HttpGet]
@@ -257,37 +331,62 @@ namespace E_COMMERCE.Controllers
             }
         }
 
+        #endregion
 
-        //[System.Web.Http.HttpGet]
-        //[System.Web.Http.HttpPost]
-        //[Route("FileUpload")]
+        #region FILTER BY CATEGORY
 
-        //public async Task<IHttpActionResult> FileUpload()
-        //{
-        //    //var context = HttpContext.Current;
-        //    //var root = context.Server.MapPath("~/ProductImages");
-        //    //var provider= new MultipartFormDataStreamProvider(root);
+        [System.Web.Http.HttpGet]
+        [Route("FilterProducts/{category}")]
+        public IHttpActionResult FilterProducts(int? category)
+        {
+            try
+            {
+                var products = mgr.filterProducts(category);
 
-        //    //try
-        //    //{
-        //    //   await Request.Content.ReadAsMultipartAsync(provider);
-        //    //    foreach(var file in provider.FileData)
-        //    //    {
-        //    //        var name = file.Headers.ContentDisposition.FileName;
-        //    //        name = name.Trim('"');
+                var result = products.Select(e => new Ent_Product
+                {
+                    productname = e.PRO_NAME,
+                    productimage = e.PRO_IMAGE,
+                    productprice = e.PRO_PRICE,
+                }).ToList();                          // To select and display specified fields
 
-        //    //        var localfile = file.LocalFileName;
-        //    //        var filepath=Path.Combine(root, name);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+        }
 
-        //    //        File.Move(localfile,filepath);
-        //    //    }
-        //    //    return Ok("File Uploaded Successfully");
-        //    //}
-        //    //catch (Exception ex) 
-        //    //{
-        //    //    return InternalServerError(ex);
-        //    //}
-        //}
+        #endregion
+
+        #region DISPLAY ALL PRODUCTS
+
+        [System.Web.Http.HttpGet]
+        [Route("DisplayProducts")]
+        public HttpResponseMessage DisplayProducts()
+        {
+            List<Ent_Product> entprolist = new List<Ent_Product>();
+            List<PRODUCT> prolist = mgr.allProducts();
+
+            if (prolist.Count != 0)
+            {
+                foreach (var product in prolist)
+                {
+                    entprolist.Add(new Ent_Product
+                    {
+                        productname = product.PRO_NAME,
+                        productimage = product.PRO_IMAGE,
+                        productprice = product.PRO_PRICE,
+                    });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, (entprolist));
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound, "Product Not Found");
+            }
+        }
 
         #endregion
 
