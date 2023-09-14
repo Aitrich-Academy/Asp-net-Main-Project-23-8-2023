@@ -46,6 +46,8 @@ namespace ECOMMERSE.Utils
             try
             {
                 JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+                //var tokens = new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(token);
+
                 JwtSecurityToken jwtToken = (JwtSecurityToken)tokenHandler.ReadToken(token);
                 if (jwtToken == null) return null;
                 byte[] key = Convert.FromBase64String(Secret);
@@ -66,7 +68,7 @@ namespace ECOMMERSE.Utils
                     throw new SecurityTokenException("Invalid token");
                 return principal;
             }
-            catch
+            catch(Exception ex) 
             {
                 return null;
             }
