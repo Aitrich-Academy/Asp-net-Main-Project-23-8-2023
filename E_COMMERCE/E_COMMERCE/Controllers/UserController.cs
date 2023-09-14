@@ -37,19 +37,19 @@ namespace ECOMMERSE.Controllers
             if (user != null && ModelState.IsValid)
             {
                 Ent_User ent = user;
-            USER usr = new USER();
-            usr.USER_NAME = ent.Name;
-            usr.USER_EMAIL = ent.email;
-            usr.USER_PASSWORD = ent.password;
-            usr.USER_PHONE = ent.phone;
-            usr.USER_ADDRESS = ent.address;
-            usr.USER_IMAGE = ent.image;
-            usr.USER_ROLE = "USER";
-            usr.USER_STATUS = "A";
-            usr.USER_CREATEBY = ent.Name;
-            usr.USER_CREATEDATE = DateTime.Now.ToString();
-            usr.USER_MODIBY = ent.Name;
-            usr.USER_MODIDATE = DateTime.Now.ToString();
+                USER usr = new USER();
+                usr.USER_NAME = ent.Name;
+                usr.USER_EMAIL = ent.email;
+                usr.USER_PASSWORD = ent.password;
+                usr.USER_PHONE = ent.phone;
+                usr.USER_ADDRESS = ent.address;
+                usr.USER_IMAGE = ent.image;
+                usr.USER_ROLE = "USER";
+                usr.USER_STATUS = "A";
+                usr.USER_CREATEBY = ent.Name;
+                usr.USER_CREATEDATE = DateTime.Now.ToString();
+                usr.USER_MODIBY = ent.Name;
+                usr.USER_MODIDATE = DateTime.Now.ToString();
 
                 // UserManager mgr = new UserManager();
                 return Request.CreateResponse(HttpStatusCode.OK, mgr.AddUser(usr));
@@ -68,52 +68,52 @@ namespace ECOMMERSE.Controllers
 
 
 
-		[Route("Login")]
-		[HttpPost]
-		public HttpResponseMessage Login(Ent_User user)
-		{
-			if (user != null && ModelState.IsValid)
-			{
-				Ent_User ent = user;
-				USER usr = new USER();
+        [Route("Login")]
+        [HttpPost]
+        public HttpResponseMessage Login(Ent_User user)
+        {
+            if (user != null && ModelState.IsValid)
+            {
+                Ent_User ent = user;
+                USER usr = new USER();
 
-				usr.USER_EMAIL = ent.email;
-				usr.USER_PASSWORD = ent.password;
+                usr.USER_EMAIL = ent.email;
+                usr.USER_PASSWORD = ent.password;
 
-				USER result = mgr.UserLogin(usr);
+                USER result = mgr.UserLogin(usr);
 
-				if (result != null)
-				{
-					String token = TokenManager.GenerateToken(result);
-					LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
-					loginResponseDTO.Token = token;
-					loginResponseDTO.email = result.USER_EMAIL;
-					loginResponseDTO.user_id = result.USER_ID;
-					loginResponseDTO.address = result.USER_ADDRESS;
-					loginResponseDTO.phone = result.USER_PHONE;
-					loginResponseDTO.role = result.USER_ROLE;
-					loginResponseDTO.name = result.USER_NAME;
+                if (result != null)
+                {
+                    String token = TokenManager.GenerateToken(result);
+                    LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
+                    loginResponseDTO.Token = token;
+                    loginResponseDTO.email = result.USER_EMAIL;
+                    loginResponseDTO.user_id = result.USER_ID;
+                    loginResponseDTO.address = result.USER_ADDRESS;
+                    loginResponseDTO.phone = result.USER_PHONE;
+                    loginResponseDTO.role = result.USER_ROLE;
+                    loginResponseDTO.name = result.USER_NAME;
 
-					ResponseDataDTO response = new ResponseDataDTO(true, "Success", loginResponseDTO);
-					return Request.CreateResponse(HttpStatusCode.OK, response);
-					//return Request.CreateErrorResponse(HttpStatusCode.OK, result);
+                    ResponseDataDTO response = new ResponseDataDTO(true, "Success", loginResponseDTO);
+                    return Request.CreateResponse(HttpStatusCode.OK, response);
+                    //return Request.CreateErrorResponse(HttpStatusCode.OK, result);
 
-					//return Request.CreateErrorResponse(HttpStatusCode.OK, "Success");
-				}
-				else
-				{
-					return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Invalid User name and password !");
-				}
-			}
-			else
-			{
-				IEnumerable<ModelError> allErrors = ModelState.Values.SelectMany(v => v.Errors);
-				return Request.CreateResponse(HttpStatusCode.BadRequest, new
-				{
-					Errors = UtilsConfig.GetErrorListFromModelState(ModelState)
-				});
-			}
-		}
+                    //return Request.CreateErrorResponse(HttpStatusCode.OK, "Success");
+                }
+                else
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Invalid User name and password !");
+                }
+            }
+            else
+            {
+                IEnumerable<ModelError> allErrors = ModelState.Values.SelectMany(v => v.Errors);
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new
+                {
+                    Errors = UtilsConfig.GetErrorListFromModelState(ModelState)
+                });
+            }
+        }
 
 
         //n
@@ -325,46 +325,61 @@ namespace ECOMMERSE.Controllers
         [System.Web.Http.HttpGet]
         [HttpPost]
         [Route("ProfileUpload")]
-        public IHttpActionResult ProfileUpload()//d6
+        public HttpResponseMessage ProfileUpload()//d6
         {
-            try
+            AuthenticationHeaderValue authorization = Request.Headers.Authorization;
+            if (authorization == null)
             {
-
-                string[] AllowedFileExt = new string[] { ".jpg", ".png" };
-
-                var httpRequest = HttpContext.Current.Request;
-
-                if (httpRequest.Files.Count == 0)                    //Checks if there is a file to upload
-                {
-                    return BadRequest("No file to upload");
-                }
-
-                //Get the uploaded file
-                var postedFile = httpRequest.Files[0];
-
-                if (!AllowedFileExt.Contains(postedFile.FileName.Substring(postedFile.FileName.LastIndexOf("."))))
-                {
-                    return BadRequest("Invalid File Format");
-                }
-
-                var fileName = Path.GetFileName(postedFile.FileName);
-                var filePath = HttpContext.Current.Server.MapPath("~/ProfileImages/" + fileName);
-
-                if (File.Exists(filePath))
-                {
-                    return BadRequest("A file with the same name already exists.");
-                }
-
-                //Save the file to the server
-                postedFile.SaveAs(filePath);
-
-                return Ok("File Uploaded Successfully");
+                return Request.CreateResponse(HttpStatusCode.Unauthorized, "no acc1");
             }
-            catch (Exception ex)
+            //if (authorization != null)
+            //{
+            Ent_User usersDTO = TokenManager.ValidateToken(authorization.Parameter);
+
+            if (usersDTO != null && usersDTO.Id != null && usersDTO.role == "USER")
             {
-                return InternalServerError(ex);
+                try
+                {
+
+                    string[] AllowedFileExt = new string[] { ".jpg", ".png" };
+
+                    var httpRequest = HttpContext.Current.Request;
+
+                    if (httpRequest.Files.Count == 0)                    //Checks if there is a file to upload
+                    {
+                        return Request.CreateResponse("No file to upload");
+                    }
+
+                    //Get the uploaded file
+                    var postedFile = httpRequest.Files[0];
+
+                    if (!AllowedFileExt.Contains(postedFile.FileName.Substring(postedFile.FileName.LastIndexOf("."))))
+                    {
+                        return Request.CreateResponse("Invalid File Format");
+                    }
+
+                    var fileName = Path.GetFileName(postedFile.FileName);
+                    var filePath = HttpContext.Current.Server.MapPath("~/ProfileImages/" + fileName);
+
+                    if (File.Exists(filePath))
+                    {
+                        return Request.CreateResponse("A file with the same name already exists.");
+                    }
+
+                    //Save the file to the server
+                    postedFile.SaveAs(filePath);
+
+                    return Request.CreateResponse("File Uploaded Successfully");
+                }
+                catch (Exception ex)
+                {
+                    return Request.CreateResponse(ex);
+                }
+            }
+            else 
+            { 
+                return Request.CreateResponse("no access login again"); 
             }
         }
     }
 }
-	
