@@ -16,6 +16,9 @@ using HttpPostAttribute = System.Web.Http.HttpPostAttribute;
 using E_COMMERCE.Utils;
 using System.Web;
 using System.IO;
+using System.Net.Http.Headers;
+using ECOMMERSE.Utils;
+using ECOMMERSE.Models;
 
 namespace E_COMMERCE.Controllers
 {
@@ -32,66 +35,76 @@ namespace E_COMMERCE.Controllers
         [HttpPost]
         public HttpResponseMessage InsertCategory(Ent_Category cat)
         {
+
             Ent_Category ent = cat;
-            if (string.IsNullOrEmpty(cat.Catname))
+            AuthenticationHeaderValue authorization=Request.Headers.Authorization;
+            if (authorization != null)
             {
-                return Request.CreateResponse("Category Name is required");
-            }
-
-            if (cat.Catid <= 0)
-            {
-                return Request.CreateResponse("Category is required");
-            }
-
-            if (string.IsNullOrEmpty(cat.Catdesc))
-            {
-                return Request.CreateResponse("Category  Description is required");
-            }
-
-
-
-            //if (product.productimage == null || product.productimage.Length == 0)
-            //{
-            //    return Request.CreateResponse("Image is required");
-            //}
-
-
-
-
-
-
-
-
-
-
-
-
-
-            if (cat != null && ModelState.IsValid)
-            {
-
-                CATEGORY caty = new CATEGORY();
-                caty.CAT_NAME = ent.Catname;
-                caty.CAT_DESC = ent.Catdesc;
-                caty.CAT_IMAGE = ent.Catimage;
-                caty.CAT_STATUS = "A";
-                caty.CAT_CREATEDBY = "Admin";
-                caty.CAT_CREATEDDATE = DateTime.Now.ToString();
-                caty.CAT_MODIBY = "Admin";
-                caty.CAT_MODIDATE = DateTime.Now.ToString();
-
-                return Request.CreateResponse(HttpStatusCode.OK, mgr.AddCategory(caty));
-
-            }
-            else
-            {
-                IEnumerable<System.Web.Http.ModelBinding.ModelError> allErrors = ModelState.Values.SelectMany(v => v.Errors);
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new
+              Ent_User  cate = TokenManager.ValidateToken(authorization.Parameter);
+                if (cate.Id != null && cate.role == "Admin")
                 {
-                    Errors = UtilsConfig.GetErrorListFromModelState(ModelState)
-                });
-            }
 
+                    if (string.IsNullOrEmpty(cat.Catname))
+                    {
+                        return Request.CreateResponse("Category Name is required");
+                    }
+
+                    if (cat.Catid <= 0)
+                    {
+                        return Request.CreateResponse("Category is required");
+                    }
+
+                    if (string.IsNullOrEmpty(cat.Catdesc))
+                    {
+                        return Request.CreateResponse("Category  Description is required");
+                    }
+
+
+
+                    //if (product.productimage == null || product.productimage.Length == 0)
+                    //{
+                    //    return Request.CreateResponse("Image is required");
+                    //}
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    if (cat != null && ModelState.IsValid)
+                    {
+
+                        CATEGORY caty = new CATEGORY();
+                        caty.CAT_NAME = ent.Catname;
+                        caty.CAT_DESC = ent.Catdesc;
+                        caty.CAT_IMAGE = ent.Catimage;
+                        caty.CAT_STATUS = "A";
+                        caty.CAT_CREATEDBY = "Admin";
+                        caty.CAT_CREATEDDATE = DateTime.Now.ToString();
+                        caty.CAT_MODIBY = "Admin";
+                        caty.CAT_MODIDATE = DateTime.Now.ToString();
+
+                        return Request.CreateResponse(HttpStatusCode.OK, mgr.AddCategory(caty));
+
+                    }
+                    else
+                    {
+                        IEnumerable<System.Web.Http.ModelBinding.ModelError> allErrors = ModelState.Values.SelectMany(v => v.Errors);
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, new
+                        {
+                            Errors = UtilsConfig.GetErrorListFromModelState(ModelState)
+                        });
+                    }
+                }
+            }
+            return Request.CreateResponse(HttpStatusCode.Unauthorized, "no access available ");
 
         }
         [System.Web.Http.HttpGet]
