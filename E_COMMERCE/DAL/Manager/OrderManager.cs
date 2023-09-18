@@ -142,7 +142,7 @@ namespace DAL.Manager
                 }
 
                 string bodyofMail = "new order" + "\nOrder Id:" + odId + "\nProduct id:" + productid + "\nProduct Name :" + proName
-                    + "\nQuantity:" + oQty + "\nTotal:" + oTotal + "\nUser Name:" + ouName + "\nEmail Address:" + oUemail + "\nDone by:" + oUdoneby;
+                    + "\nQuantity:" + oQty + "\nTotal:" + oTotal + "\nUser Name:" + ouName + "\nEmail Address : " + oUemail + "\nDone by:" + oUdoneby;
                 string fromemailid = "trofiadmit1@gmail.com";
                 string fromapppass = "oufjybsvlwqamlpm";
                 MailMessage newMail = new MailMessage();
@@ -194,5 +194,18 @@ namespace DAL.Manager
             return "success";
         }
         #endregion
+
+        public int GetPrice(ORDER ord)
+        {
+            var total = dbhelper.PRODUCTS.Find(ord.ORD_PROID);
+
+            if (total != null)
+            {
+                return total.PRO_PRICE;
+
+            }
+            else { return 0; }
+
+        }
     }
 }

@@ -42,14 +42,17 @@ namespace E_COMMERCE.Controllers
 
             public HttpResponseMessage PlaceOrder(Ent_Orders order)
             {
-                if (order != null && ModelState.IsValid)
+                Ent_Orders ent = order;
+                ORDER ord = new ORDER();
+                int total = mngr.GetPrice(ord);
+                if (order != null )
                 {
-                    Ent_Orders ent = order;
-                    ORDER ord = new ORDER();
+                   
                     ord.ORD_USERID = ent.Ord_userId;
                     ord.ORD_PROID = ent.Ord_proId;
                     ord.ORD_QTY = ent.Ord_qty;
-                    ord.ORD_TOTAL = ent.Ord_total;
+                    int productPrice = mngr.GetPrice(ord);
+                    ord.ORD_TOTAL = order.Ord_qty * productPrice;
                     ord.ORD_STATUS = "A";
                     ord.ORD_CREATEBY = "user";// ent.Ord_createBy;
                     ord.ORD_CREATEDATE = DateTime.Now.ToString();
@@ -82,27 +85,47 @@ namespace E_COMMERCE.Controllers
 
             public List<Ent_Orders> DisplayAllOrders()
             {
+
                 List<Ent_Orders> ent = new List<Ent_Orders>();
                 List<ORDER> ord_Obj = mngr.displayAllOrders();
-                if (ord_Obj.Count != 0)
+                AuthenticationHeaderValue authorization = Request.Headers.Authorization;
+                if (authorization != null)
                 {
 
-                    foreach (var obj in ord_Obj)
+
+
+                    Ent_User usersDTO = TokenManager.ValidateToken(authorization.Parameter);
+
+
+                    if (usersDTO.Id != null && usersDTO.role == "Admin")
                     {
-                        ent.Add(new Ent_Orders
+
+
+
+                        if (ord_Obj.Count != 0)
                         {
-                            orderId = obj.ORD_ID,
-                            Ord_userId = Convert.ToInt32(obj.ORD_USERID),
-                            Ord_proId = Convert.ToInt32(obj.ORD_PROID),
-                            Ord_qty = obj.ORD_QTY,
-                            Ord_total = obj.ORD_TOTAL,
-                            Ord_createBy = obj.ORD_CREATEBY,
-                            Ord_createDate = DateTime.Now.ToString(),
-                            Ord_modiBy = obj.ORD_MODIBY,
-                            Ord_modiDate = DateTime.Now.ToString()
-                        });
+
+                            foreach (var obj in ord_Obj)
+                            {
+                                ent.Add(new Ent_Orders
+                                {
+                                    orderId = obj.ORD_ID,
+                                    Ord_userId = Convert.ToInt32(obj.ORD_USERID),
+                                    Ord_proId = Convert.ToInt32(obj.ORD_PROID),
+                                    Ord_qty = obj.ORD_QTY,
+                                    Ord_total = obj.ORD_TOTAL,
+                                    Ord_createBy = obj.ORD_CREATEBY,
+                                    Ord_createDate = DateTime.Now.ToString(),
+                                    Ord_modiBy = obj.ORD_MODIBY,
+                                    Ord_modiDate = DateTime.Now.ToString()
+                                });
+
+                            }
+                        }
 
                     }
+
+
                 }
                 return ent;
             }
@@ -175,7 +198,6 @@ namespace E_COMMERCE.Controllers
             #endregion
 
 
-
             #region User Order by Id
 
 
@@ -202,6 +224,11 @@ namespace E_COMMERCE.Controllers
                 return Ok(result);
             }
 
+            #endregion
+
+
+            #region Order Cancel
+
             [System.Web.Http.HttpGet]
             [Route("OrderCancel")]
             [System.Web.Http.HttpDelete]
@@ -223,7 +250,6 @@ namespace E_COMMERCE.Controllers
             }
 
             #endregion
-
 
 
             #region Order Confirm Mail
